@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alfie Arcade</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: #080b12;
+  color: white;
+}
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(8,11,18,.95);
+  border-bottom: 1px solid #222838;
+  padding: 14px;
+}
+
+.top {
+  max-width: 1250px;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.logo {
+  font-size: 25px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.logo span {
+  color: #7c5cff;
+}
+
+.search {
+  flex: 1;
+}
+
+.search input {
+  width: 100%;
+  padding: 13px 18px;
+  border: 0;
+  outline: 0;
+  border-radius: 12px;
+  background: #171c28;
+  color: white;
+  font-size: 15px;
+}
+
+.code-btn {
+  background: #7c5cff;
+  color: white;
+  border: 0;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+main {
+  max-width: 1250px;
+  margin: auto;
+  padding: 25px 15px 60px;
+}
+
+.hero {
+  padding: 35px;
+  border-radius: 20px;
+  background: linear-gradient(135deg,#17152d,#101827);
+  margin-bottom: 25px;
+}
+
+.hero h1 {
+  font-size: clamp(32px,6vw,60px);
+  margin-bottom: 10px;
+}
+
+.hero p {
+  color: #aeb5c7;
+  max-width: 650px;
+  line-height: 1.6;
+}
+
+.categories {
+  display: flex;
+  gap: 9px;
+  overflow-x: auto;
+  padding-bottom: 18px;
+}
+
+.category {
+  flex: 0 0 auto;
+  border: 1px solid #282e3d;
+  background: #151a25;
+  color: white;
+  border-radius: 999px;
+  padding: 9px 15px;
+  cursor: pointer;
+}
+
+.category.active,
+.category:hover {
+  background: #7c5cff;
+}
+
+.section-title {
+  margin: 20px 0 14px;
+  font-size: 23px;
+}
+
+.games {
+  display: grid;
+  grid-template-columns: repeat(auto-fill,minmax(155px,1fr));
+  gap: 14px;
+}
+
+.game {
+  background: #121722;
+  border: 1px solid #222938;
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.game:hover {
+  transform: translateY(-4px);
+  border-color: #7c5cff;
+}
+
+.thumbnail {
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg,#28204d,#162d48);
+  font-size: 42px;
+}
+
+.game-info {
+  padding: 11px;
+}
+
+.game-name {
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.game-category {
+  color: #8992a7;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.empty {
+  text-align: center;
+  padding: 50px;
+  color: #8992a7;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0,0,0,.78);
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.modal-box {
+  max-width: 900px;
+  margin: 30px auto;
+  background: #111621;
+  border: 1px solid #2b3140;
+  border-radius: 18px;
+  padding: 22px;
+}
+
+.close {
+  float: right;
+  background: #252b38;
+  color: white;
+  border: 0;
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.code-input {
+  width: 100%;
+  margin: 20px 0;
+  padding: 15px;
+  background: #090c13;
+  color: white;
+  border: 1px solid #333b4d;
+  border-radius: 10px;
+  outline: none;
+  font-size: 16px;
+}
+
+.sound-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill,minmax(150px,1fr));
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.sound {
+  background: #1a2030;
+  border: 1px solid #2b3345;
+  color: white;
+  border-radius: 10px;
+  padding: 14px;
+  cursor: pointer;
+}
+
+.sound:hover {
+  background: #7c5cff;
+}
+
+.ai-chat {
+  min-height: 300px;
+  background: #090c13;
+  border-radius: 12px;
+  padding: 15px;
+  margin: 20px 0;
+  overflow-y: auto;
+}
+
+.message {
+  padding: 11px 14px;
+  margin: 8px 0;
+  border-radius: 12px;
+  max-width: 85%;
+  line-height: 1.5;
+}
+
+.bot {
+  background: #1b2130;
+}
+
+.user {
+  background: #654bd0;
+  margin-left: auto;
+}
+
+.ai-row {
+  display: flex;
+  gap: 8px;
+}
+
+.ai-row input {
+  flex: 1;
+  background: #090c13;
+  border: 1px solid #303747;
+  border-radius: 10px;
+  color: white;
+  padding: 13px;
+}
+
+.ai-row button {
+  border: 0;
+  border-radius: 10px;
+  padding: 0 18px;
+  background: #7c5cff;
+  color: white;
+  font-weight: bold;
+}
+
+.notice {
+  color: #8992a7;
+  font-size: 13px;
+  line-height: 1.5;
+  margin-top: 12px;
+}
+
+@media(max-width:600px) {
+  .top {
+    flex-wrap: wrap;
+  }
+
+  .logo {
+    width: 100%;
+  }
+
+  .search {
+    width: calc(100% - 75px);
+  }
+
+  .code-btn {
+    width: 60px;
+    padding: 12px 5px;
+  }
+
+  .hero {
+    padding: 25px 20px;
+  }
+
+  .games {
+    grid-template-columns: repeat(2,1fr);
+    gap: 10px;
+  }
+
+  .thumbnail {
+    height: 100px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="top">
+    <div class="logo">ALFIE<span>ARCADE</span></div>
+
+    <div class="search">
+      <input id="search" type="text"
+        placeholder="Search 500+ games..."
+        oninput="searchGames()">
+    </div>
+
+    <button class="code-btn" onclick="openCode()">CODE</button>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero">
+    <h1>Play. Discover. Have Fun.</h1>
+    <p>
+      A fast gaming hub with hundreds of game slots,
+      categories, search and hidden features.
+    </p>
+  </section>
+
+  <div class="categories" id="categories"></div>
+
+  <h2 class="section-title">🔥 Popular Games</h2>
+  <div class="games" id="games"></div>
+
+</main>
+
+<!-- CODE WINDOW -->
+
+<div class="modal" id="codeModal">
+  <div class="modal-box">
+    <button class="close" onclick="closeAll()">✕</button>
+
+    <h2>🔐 Enter Code</h2>
+
+    <input
+      class="code-input"
+      id="secretCode"
+      placeholder="Enter a code..."
+      autocomplete="off"
+      onkeydown="if(event.key==='Enter')checkCode()">
+
+    <button class="code-btn" onclick="checkCode()">ENTER</button>
+
+    <p class="notice">
+      Try your special access codes here.
+    </p>
+  </div>
+</div>
+
+<!-- SOUNDBOARD -->
+
+<div class="modal" id="soundModal">
+  <div class="modal-box">
+    <button class="close" onclick="closeAll()">✕</button>
+
+    <h2>🔊 Meme Soundboard</h2>
+
+    <p class="notice">
+      These are placeholder sound buttons. Replace them with
+      audio files you have permission to use.
+    </p>
+
+    <div class="sound-grid" id="sounds"></div>
+  </div>
+</div>
+
+<!-- AI -->
+
+<div class="modal" id="aiModal">
+  <div class="modal-box">
+    <button class="close" onclick="closeAll()">✕</button>
+
+    <h2>🤖 AlfieAI</h2>
+
+    <p class="notice">
+      This is the front-end AI interface. To make it a real AI,
+      connect it to your own secure server/API rather than putting
+      an API key inside this public HTML file.
+    </p>
+
+    <div class="ai-chat" id="chat">
+      <div class="message bot">
+        Hi! I'm AlfieAI. Ask me something!
+      </div>
+    </div>
+
+    <div class="ai-row">
+      <input id="aiInput" placeholder="Ask AlfieAI..."
+        onkeydown="if(event.key==='Enter')askAI()">
+      <button onclick="askAI()">Send</button>
+    </div>
+  </div>
+</div>
+
+<script>
+
+/* =========================
+   GAME DATABASE
+========================= */
+
+const categories = [
+  "All",
+  "Action",
+  "Arcade",
+  "Puzzle",
+  "Racing",
+  "Sports",
+  "Adventure",
+  "Strategy",
+  "Multiplayer"
+];
+
+const gameTypes = [
+  "Action",
+  "Arcade",
+  "Puzzle",
+  "Racing",
+  "Sports",
+  "Adventure",
+  "Strategy",
+  "Multiplayer"
+];
+
+const emojis = [
+  "🎮","🚗","⚽","🏀","🧩","🚀",
+  "🧟","🏎️","🐱","👾","🛸","🥷",
+  "🏆","🔥","🦖","🤖"
+];
+
+let games = [];
+
+for(let i = 1; i <= 550; i++) {
+
+  const category =
+    gameTypes[(i - 1) % gameTypes.length];
+
+  games.push({
+    id: i,
+    name: "Game " + i,
+    category: category,
+    emoji: emojis[(i - 1) % emojis.length]
+  });
+}
+
+
+/* =========================
+   CATEGORY BUTTONS
+========================= */
+
+let currentCategory = "All";
+
+function createCategories() {
+
+  const box = document.getElementById("categories");
+
+  box.innerHTML = categories.map(category => `
+    <button
+      class="category ${category === "All" ? "active" : ""}"
+      onclick="filterCategory('${category}', this)">
+      ${category}
+    </button>
+  `).join("");
+}
+
+function filterCategory(category, button) {
+
+  currentCategory = category;
+
+  document
+    .querySelectorAll(".category")
+    .forEach(x => x.classList.remove("active"));
+
+  button.classList.add("active");
+
+  searchGames();
+}
+
+
+/* =========================
+   DISPLAY GAMES
+========================= */
+
+function displayGames(list) {
+
+  const box = document.getElementById("games");
+
+  if(!list.length) {
+    box.innerHTML =
+      `<div class="empty">No games found.</div>`;
+    return;
+  }
+
+  box.innerHTML = list.map(game => `
+    <div class="game" onclick="openGame(${game.id})">
+
+      <div class="thumbnail">
+        ${game.emoji}
+      </div>
+
+      <div class="game-info">
+        <div class="game-name">
+          ${game.name}
+        </div>
+
+        <div class="game-category">
+          ${game.category}
+        </div>
+      </div>
+
+    </div>
+  `).join("");
+}
+
+
+/* =========================
+   SEARCH
+========================= */
+
+function searchGames() {
+
+  const text =
+    document.getElementById("search")
+      .value
+      .toLowerCase();
+
+  let result = games.filter(game => {
+
+    const matchesText =
+      game.name.toLowerCase().includes(text);
+
+    const matchesCategory =
+      currentCategory === "All" ||
+      game.category === currentCategory;
+
+    return matchesText && matchesCategory;
+  });
+
+  displayGames(result);
+}
+
+
+/* =========================
+   GAME LAUNCH
+========================= */
+
+function openGame(id) {
+
+  const game = games.find(x => x.id === id);
+
+  alert(
+    game.name +
+    "\n\nThis game slot is ready for you to connect to an authorised HTML5 game."
+  );
+}
+
+
+/* =========================
+   CODE SYSTEM
+========================= */
+
+function openCode() {
+
+  document.getElementById("codeModal")
+    .style.display = "block";
+
+  document.getElementById("secretCode")
+    .focus();
+}
+
+function checkCode() {
+
+  const code =
+    document.getElementById("secretCode")
+      .value
+      .trim()
+      .toLowerCase();
+
+  if(code === "games") {
+
+    closeAll();
+
+    document.getElementById("soundModal")
+      .style.display = "block";
+
+    createSoundboard();
+
+  } else if(code === "alfieai") {
+
+    closeAll();
+
+    document.getElementById("aiModal")
+      .style.display = "block";
+
+  } else {
+
+    alert("Unknown code.");
+  }
+}
+
+
+/* =========================
+   SOUNDBOARD
+========================= */
+
+function createSoundboard() {
+
+  const sounds =
+    document.getElementById("sounds");
+
+  if(sounds.children.length) return;
+
+  let html = "";
+
+  for(let i = 1; i <= 120; i++) {
+
+    html += `
+      <button class="sound"
+        onclick="playSound(${i})">
+        🔊 Meme Sound ${i}
+      </button>
+    `;
+  }
+
+  sounds.innerHTML = html;
+}
+
+function playSound(id) {
+
+  /*
+    Add your authorised audio file here.
+
+    Example:
+
+    const audio =
+      new Audio("sounds/meme1.mp3");
+
+    audio.play();
+  */
+
+  alert(
+    "Sound " + id +
+    " is a placeholder. Add an audio file you are allowed to use."
+  );
+}
+
+
+/* =========================
+   ALFIE AI FRONT END
+========================= */
+
+function askAI() {
+
+  const input =
+    document.getElementById("aiInput");
+
+  const text =
+    input.value.trim();
+
+  if(!text) return;
+
+  addMessage(text, "user");
+
+  input.value = "";
+
+  setTimeout(() => {
+
+    addMessage(
+      "I'm currently running in demo mode. Connect this interface to your own secure AI backend to give AlfieAI real AI capabilities.",
+      "bot"
+    );
+
+  }, 500);
+}
+
+function addMessage(text, type) {
+
+  const chat =
+    document.getElementById("chat");
+
+  const message =
+    document.createElement("div");
+
+  message.className =
+    "message " + type;
+
+  message.textContent = text;
+
+  chat.appendChild(message);
+
+  chat.scrollTop =
+    chat.scrollHeight;
+}
+
+
+/* =========================
+   CLOSE WINDOWS
+========================= */
+
+function closeAll() {
+
+  document
+    .querySelectorAll(".modal")
+    .forEach(modal =>
+      modal.style.display = "none"
+    );
+}
+
+
+/* =========================
+   START
+========================= */
+
+createCategories();
+displayGames(games);
+
+</script>
+
+</body>
+</html>
